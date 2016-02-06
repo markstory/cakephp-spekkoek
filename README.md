@@ -14,9 +14,10 @@ a few new concepts to a CakePHP application that extend and enhance the existing
   approach to bootstrapping. This class is used to load bootstrapping and
   application configuration. It also provides hook methods for configuring
   middleware.
-* `Spekkoek\MiddlewarePipe` Middleware are callable objects that 'wrap' the
-  request/response object. `Application` is also a middleware object that helps
-  encapsulate the existing CakePHP dispatch process.
+* `Spekkoek\MiddlewareStack` A MiddlewareStack provides an interface for
+  building and manipulating the stack of middleware. The `Application` is also
+  a middleware object that helps encapsulate the existing CakePHP dispatch
+  process.
 * `Spekkoek\Server` Is the entry point for a request/response. It consumes an
   application, and emits the response to the server API.
 
