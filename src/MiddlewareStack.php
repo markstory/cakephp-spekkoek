@@ -46,6 +46,12 @@ class MiddlewareStack implements Countable
         return $this;
     }
 
+    public function insertAt($index, callable $callable)
+    {
+        array_splice($this->stack, $index, 0, $callable);
+        return $this;
+    }
+
     /**
      * Get the number of connected middleware layers.
      *

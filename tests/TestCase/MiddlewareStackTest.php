@@ -64,7 +64,24 @@ class MiddlewareStackTest extends TestCase
 
     public function testInsertAt()
     {
-        $this->markTestIncomplete('not done');
+        $one = function () {
+        };
+        $two = function () {
+        };
+        $three = function() {
+        };
+
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertAt(0, $three);
+        $this->assertSame($three, $stack->get(0));
+        $this->assertSame($one, $stack->get(1));
+        $this->assertSame($two, $stack->get(2));
+
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertAt(1, $three);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($three, $stack->get(1));
+        $this->assertSame($two, $stack->get(2));
     }
 
     public function testInsertAtOutOfBounds()
