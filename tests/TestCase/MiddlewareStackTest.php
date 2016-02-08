@@ -1,8 +1,9 @@
 <?php
 namespace Spekkoek\Test\TestCase;
 
-use Spekkoek\MiddlewareStack;
 use Cake\TestSuite\TestCase;
+use Spekkoek\MiddlewareStack;
+use Spekkoek\Test\TestApp\SampleMiddleware;
 
 class MiddlewareStackTest extends TestCase
 {
@@ -86,17 +87,48 @@ class MiddlewareStackTest extends TestCase
 
     public function testInsertAtOutOfBounds()
     {
-        $this->markTestIncomplete('not done');
+        $one = function () {
+        };
+        $two = function () {
+        };
+
+        $stack = new MiddlewareStack();
+        $stack->push($one)->insertAt(99, $two);
+
+        $this->assertCount(2, $stack);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($two, $stack->get(1));
     }
 
     public function testInsertAtNegative()
     {
-        $this->markTestIncomplete('not done');
+        $one = function () {
+        };
+        $two = function () {
+        };
+
+        $stack = new MiddlewareStack();
+        $stack->push($one)->insertAt(-1, $two);
+
+        $this->assertCount(2, $stack);
+        $this->assertSame($two, $stack->get(0));
+        $this->assertSame($one, $stack->get(1));
     }
 
     public function testInsertBefore()
     {
-        $this->markTestIncomplete('not done');
+        $one = function () {
+        };
+        $two = new SampleMiddleware();
+        $three = function () {
+        };
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertBefore('Spekkoek\Test\TestApp\SampleMiddleware', $three);
+
+        $this->assertCount(3, $stack);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($three, $stack->get(1));
+        $this->assertSame($two, $stack->get(2));
     }
 
     public function testInsertBeforeInvalid()

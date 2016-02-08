@@ -46,10 +46,46 @@ class MiddlewareStack implements Countable
         return $this;
     }
 
+    /**
+     * Insert a middleware callable at a specific index.
+     *
+     * If the index already exists, the new callable will be inserted,
+     * and the existing element will be shifted one index greater.
+     *
+     * @param int $index The index to insert at.
+     * @param callable $callable The callable to insert.
+     * @return $this
+     */
     public function insertAt($index, callable $callable)
     {
         array_splice($this->stack, $index, 0, $callable);
         return $this;
+    }
+
+    /**
+     * Insert a middleware object before the first matching class.
+     *
+     * Finds the index of te first middleware that matches the provided class,
+     * and inserts the supplied callable before it. If the class is not found,
+     * this method will behave like push().
+     *
+     * @param string $class The classname to insert the middleware before.
+     * @param callable $callable The middleware to insert
+     * @return $this
+     */
+    public function insertBefore($class, $callable)
+    {
+        $found = false;
+        foreach ($this->stack as $i => $object) {
+            if (is_a($object, $class)) {
+                $found = true;
+                break;
+            }
+        }
+        if ($found) {
+            return $this->insertAt($i, $callable);
+        }
+        return $this->push($callable);
     }
 
     /**
