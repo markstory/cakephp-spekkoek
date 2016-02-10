@@ -123,7 +123,7 @@ class MiddlewareStackTest extends TestCase
         $three = function () {
         };
         $stack = new MiddlewareStack();
-        $stack->push($one)->push($two)->insertBefore('Spekkoek\Test\TestApp\SampleMiddleware', $three);
+        $stack->push($one)->push($two)->insertBefore(SampleMiddleware::class, $three);
 
         $this->assertCount(3, $stack);
         $this->assertSame($one, $stack->get(0));
@@ -133,16 +133,49 @@ class MiddlewareStackTest extends TestCase
 
     public function testInsertBeforeInvalid()
     {
-        $this->markTestIncomplete('not done');
+        $one = function () {
+        };
+        $two = new SampleMiddleware();
+        $three = function () {
+        };
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertBefore('InvalidClassName', $three);
+
+        $this->assertCount(3, $stack);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($two, $stack->get(1));
+        $this->assertSame($three, $stack->get(2));
     }
 
     public function testInsertAfter()
     {
-        $this->markTestIncomplete('not done');
+        $one = new SampleMiddleware();
+        $two = function () {
+        };
+        $three = function () {
+        };
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertAfter(SampleMiddleware::class, $three);
+
+        $this->assertCount(3, $stack);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($three, $stack->get(1));
+        $this->assertSame($two, $stack->get(2));
     }
 
     public function testInsertAfterInvalid()
     {
-        $this->markTestIncomplete('not done');
+        $one = new SampleMiddleware();
+        $two = function () {
+        };
+        $three = function () {
+        };
+        $stack = new MiddlewareStack();
+        $stack->push($one)->push($two)->insertAfter('InvalidClass', $three);
+
+        $this->assertCount(3, $stack);
+        $this->assertSame($one, $stack->get(0));
+        $this->assertSame($two, $stack->get(1));
+        $this->assertSame($three, $stack->get(2));
     }
 }
