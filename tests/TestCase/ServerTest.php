@@ -5,6 +5,7 @@ use Cake\TestSuite\TestCase;
 use Spekkoek\Server;
 use Spekkoek\Test\TestApp\BadResponseApplication;
 use Spekkoek\Test\TestApp\InvalidMiddlewareApplication;
+use Spekkoek\Test\TestApp\MiddlewareApplication;
 
 class ServerTest extends TestCase
 {
@@ -38,7 +39,11 @@ class ServerTest extends TestCase
 
     public function testRunMultipleMiddlewareSuccess()
     {
-        $this->markTestIncomplete();
+        $app = new MiddlewareApplication();
+        $server = new Server($app);
+        $res = $server->run();
+        $this->assertSame('first', $res->getHeaderLine('X-First'));
+        $this->assertSame('second', $res->getHeaderLine('X-Second'));
     }
 
     /**

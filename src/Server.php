@@ -27,31 +27,40 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
-        if (!$request) {
-            $request = ServerRequestFactory::fromGlobals();
-        }
-        if (!$response) {
-            $response = new Response();
-        }
+        $request = $request ?: ServerRequestFactory::fromGlobals();
+        $response = $response ?: new Response();
+
         $middleware = $this->app->middleware(new MiddlewareStack());
         if (!($middleware instanceof MiddlewareStack)) {
             throw new RuntimeException('The application `middleware` method did not return a middleware stack.');
         }
         $middleware->push($this->app);
         $response = $this->runner->run($middleware, $request, $response);
+
         if (!($response instanceof ResponseInterface)) {
             throw new RuntimeException(sprintf(
                 'Application did not create a response. Got "%s" instead.',
                 is_object($response) ? get_class($response) : $response
             ));
         }
+        return $response;
     }
 
+    /**
+     * Set the application.
+     *
+     * @param Spekkoek\BaseApplication $app The application to set.
+     */
     public function setApp(BaseApplication $app)
     {
         $this->app = $app;
     }
 
+    /**
+     * Get the current application.
+     *
+     * @return Spekkoek\BaseApplication The application that will be run.
+     */
     public function getApp(BaseApplication $app)
     {
         return $this->app;

@@ -20,5 +20,6 @@ abstract class BaseApplication
         // Create the application Dispatcher.
         // Dispatch the request/response
         // Convert the response back into a PSR7 object.
+        return $response;
     }
 }
