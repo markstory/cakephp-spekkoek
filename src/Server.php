@@ -5,7 +5,7 @@ use Spekkoek\BaseApplication;
 use Spekkoek\MiddlewareStack;
 use Spekkoek\Runner;
 use RuntimeException;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
@@ -24,7 +24,7 @@ class Server
         $this->setRunner(new Runner());
     }
 
-    public function run(RequestInterface $request = null, ResponseInterface $response = null)
+    public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
         if (!$request) {
@@ -38,7 +38,13 @@ class Server
             throw new RuntimeException('The application `middleware` method did not return a middleware stack.');
         }
         $middleware->push($this->app);
-        return $this->runner->run($middleware, $request, $response);
+        $response = $this->runner->run($middleware, $request, $response);
+        if (!($response instanceof ResponseInterface)) {
+            throw new RuntimeException(sprintf(
+                'Application did not create a response. Got "%s" instead.',
+                is_object($response) ? get_class($response) : $response
+            ));
+        }
     }
 
     public function setApp(BaseApplication $app)

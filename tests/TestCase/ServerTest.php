@@ -3,6 +3,7 @@ namespace Spekkoek\Test\TestCase;
 
 use Cake\TestSuite\TestCase;
 use Spekkoek\Server;
+use Spekkoek\Test\TestApp\BadResponseApplication;
 use Spekkoek\Test\TestApp\InvalidMiddlewareApplication;
 
 class ServerTest extends TestCase
@@ -40,8 +41,14 @@ class ServerTest extends TestCase
         $this->markTestIncomplete();
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Application did not create a response. Got "Not a response" instead.
+     */
     public function testRunMiddlewareNoResponse()
     {
-        $this->markTestIncomplete();
+        $app = new BadResponseApplication();
+        $server = new Server($app);
+        $server->run();
     }
 }
