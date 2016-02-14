@@ -1,6 +1,7 @@
 <?php
 namespace Spekkoek;
 
+use Cake\Core\Configure;
 use Cake\Network\Request as CakeRequest;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
@@ -21,21 +22,26 @@ class RequestTransformer
     public static function toCake(PsrRequest $request)
     {
         $post = $request->getParsedBody();
+        $server = $request->getServerParams();
+
         $files = static::getFiles($request);
         if ($files) {
             $post = Hash::merge($post, $files);
         }
+        $path = $request->getUri()->getPath();
+        list($base, $webroot) = static::getBase($path, $server);
 
         return new CakeRequest([
             'query' => $request->getQueryParams(),
             'post' => $post,
             'cookies' => $request->getCookieParams(),
-            'environment' => $request->getServerParams(),
+            'environment' => $server,
             'params' => static::getParams($request),
-            'url' => '',
-            'base' => '',
-            'webroot' => '',
-            'input' => null,
+            'url' => static::getUri($path, $base),
+            // 'session' => [],
+            'base' => $base,
+            'webroot' => $webroot,
+            'input' => '',
         ]);
     }
 
@@ -116,5 +122,72 @@ class RequestTransformer
             'error' => $file->getError(),
             'size' => $file->getSize(),
         ];
+    }
+
+    /**
+     * Calculate the base directory and webroot directory.
+     *
+     * This code is a copy/paste from Cake\Network\Request::_base()
+     */
+    protected static function getBase($path, $server)
+    {
+        $base = $webroot = $baseUrl = null;
+        $config = Configure::read('App');
+        extract($config);
+
+        if ($base !== false && $base !== null) {
+            return [$base, $base . '/'];
+        }
+
+        if (!$baseUrl) {
+            $base = dirname(Hash::get($server, 'PHP_SELF'));
+            // Clean up additional / which cause following code to fail..
+            $base = preg_replace('#/+#', '/', $base);
+
+            $indexPos = strpos($base, '/' . $webroot . '/index.php');
+            if ($indexPos !== false) {
+                $base = substr($base, 0, $indexPos) . '/' . $webroot;
+            }
+            if ($webroot === basename($base)) {
+                $base = dirname($base);
+            }
+
+            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
+                $base = '';
+            }
+            $base = implode('/', array_map('rawurlencode', explode('/', $base)));
+            return [$base, $base . '/'];
+        }
+
+        $file = '/' . basename($baseUrl);
+        $base = dirname($baseUrl);
+
+        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
+            $base = '';
+        }
+        $webrootDir = $base . '/';
+
+        $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
+        $docRootContainsWebroot = strpos($docRoot, $webroot);
+
+        if (!empty($base) || !$docRootContainsWebroot) {
+            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
+                $webrootDir .= $webroot . '/';
+            }
+        }
+        return [$base . $file, $webrootDir];
+    }
+
+    /**
+     * Convert the full URI into the application specific one.
+     *
+     * The base directory/script name is removed from $uri to get the application URI.
+     */
+    protected static function getUri($uri, $base)
+    {
+        if (strlen($base) > 0 && strpos($uri, $base) === 0) {
+            $uri = substr($uri, strlen($base));
+        }
+        return $uri;
     }
 }

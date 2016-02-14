@@ -1,6 +1,7 @@
 <?php
 namespace Spekkoek\Test\TestCase;
 
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Spekkoek\RequestTransformer;
@@ -186,9 +187,43 @@ class RequestTransformerTest extends TestCase
         $this->assertEquals($expected, $request->data);
     }
 
-    public function testToCakeUrl()
+    public function testToCakeUrlModRewrite()
     {
-        $this->markTestIncomplete();
+        Configure::write('App.baseUrl', false);
+
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/branches',
+            'PHP_SELF' => '/urlencode me/webroot/index.php',
+            'REQUEST_URI' => '/posts/view/1',
+        ];
+        $psr = ServerRequestFactory::fromGlobals($server);
+        $cake = RequestTransformer::toCake($psr);
+
+        $this->assertEquals('/urlencode%20me', $cake->base);
+        $this->assertEquals('/urlencode%20me/', $cake->webroot);
+        $this->assertEquals('posts/view/1', $cake->url);
+    }
+
+    public function testToCakeUrlNoModRewrite()
+    {
+        Configure::write('App', [
+            'dir' => 'app',
+            'webroot' => 'webroot',
+            'base' => false,
+            'baseUrl' => '/cake/index.php'
+        ]);
+        $server = [
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake/index.php',
+            'PHP_SELF' => '/cake/index.php/posts/index',
+            'REQUEST_URI' => '/cake/index.php/posts/index',
+        ];
+        $psr = ServerRequestFactory::fromGlobals($server);
+        $cake = RequestTransformer::toCake($psr);
+
+        $this->assertSame('/cake/webroot/', $cake->webroot);
+        $this->assertSame('/cake/index.php', $cake->base);
+        $this->assertSame('posts/index', $cake->url);
     }
 
     public function testToCakeInputStream()
