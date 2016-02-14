@@ -29,8 +29,6 @@ class Runner
         }
 
         // End of the stack
-        if ($next === null) {
-            return $response;
-        }
+        return $response;
     }
 }
