@@ -7,9 +7,13 @@ use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 
 /**
- * Translate and transform from CakePHP requests into PSR7 ones and
- * back again. This is an important step for maintaining backwards compatibility
- * with existing CakePHP applications.
+ * Translate and transform from PSR7 requests into CakePHP requests.
+ *
+ * This is an important step for maintaining backwards compatibility
+ * with existing CakePHP applications, which depend on the CakePHP request object.
+ *
+ * There is no reverse transform as the 'application' cannot return a mutated
+ * request object.
  */
 class RequestTransformer
 {
