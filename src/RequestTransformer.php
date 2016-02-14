@@ -25,7 +25,7 @@ class RequestTransformer
         $server = $request->getServerParams();
 
         $files = static::getFiles($request);
-        if ($files) {
+        if (!empty($files)) {
             $post = Hash::merge($post, $files);
         }
         $path = $request->getUri()->getPath();
@@ -38,10 +38,8 @@ class RequestTransformer
             'environment' => $server,
             'params' => static::getParams($request),
             'url' => static::getUri($path, $base),
-            // 'session' => [],
             'base' => $base,
             'webroot' => $webroot,
-            'input' => '',
         ]);
     }
 

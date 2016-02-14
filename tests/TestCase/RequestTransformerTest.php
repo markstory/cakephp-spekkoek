@@ -279,13 +279,18 @@ class RequestTransformerTest extends TestCase
         $this->assertEquals('posts/add', $cake->url);
     }
 
-    public function testToCakeInputStream()
+    public function testToCakeBaseSessionPath()
     {
-        $this->markTestIncomplete();
-    }
+        Configure::write('App.baseUrl', false);
 
-    public function testToCakeSession()
-    {
-        $this->markTestIncomplete();
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/branches',
+            'PHP_SELF' => '/thisapp/webroot/index.php',
+            'REQUEST_URI' => '/posts/view/1',
+        ];
+        $psr = ServerRequestFactory::fromGlobals($server);
+        $cake = RequestTransformer::toCake($psr);
+
+        $this->assertEquals('/thisapp', ini_get('session.cookie_path'));
     }
 }
