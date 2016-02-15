@@ -22,12 +22,27 @@ class ResponseTransformer
     {
         $data = [
             'status' => $response->getStatusCode(),
-            // String cast handles rewind & read.
-            'body' => '' . $response->getBody(),
+            'body' => static::getBody($response),
         ];
         $cake = new CakeResponse($data);
         $cake->header(static::collapseHeaders($response));
         return $cake;
+    }
+
+    /**
+     * Get the response body from a PSR7 Response.
+     *
+     * @param Psr\Http\Message\ResponseInterface $response The response to convert.
+     * @return string The response body.
+     */
+    protected static function getBody($response)
+    {
+        $stream = $response->getBody();
+        if ($stream->getSize() === 0) {
+            return '';
+        }
+        $stream->rewind();
+        return $stream->getContents();
     }
 
     /**
