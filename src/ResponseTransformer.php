@@ -20,6 +20,33 @@ class ResponseTransformer
      */
     public static function toCake(PsrResponse $response)
     {
+        $data = [
+            'status' => $response->getStatusCode(),
+            // String cast handles rewind & read.
+            'body' => '' . $response->getBody(),
+        ];
+        $cake = new CakeResponse($data);
+        $cake->header(static::collapseHeaders($response));
+        return $cake;
+    }
+
+    /**
+     * Convert a PSR7 Response headers into a flat array
+     *
+     * @param Psr\Http\Message\ResponseInterface $response The response to convert.
+     * @return Cake\Network\Response The equivalent CakePHP response
+     */
+    protected static function collapseHeaders($response)
+    {
+        $out = [];
+        foreach ($response->getHeaders() as $name => $value) {
+            if (count($value) === 1) {
+                $out[$name] = $value[0];
+            } else {
+                $out[$name] = $value;
+            }
+        }
+        return $out;
     }
 
     /**
