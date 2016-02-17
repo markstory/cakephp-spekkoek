@@ -3,6 +3,7 @@ namespace Spekkoek;
 
 use Cake\Network\Response as CakeResponse;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
+use Zend\Diactoros\Response as DiactorosResponse;
 
 /**
  * This class converts PSR7 responses into CakePHP ones and back again.
@@ -72,5 +73,13 @@ class ResponseTransformer
      */
     public static function toPsr(CakeResponse $response)
     {
+        $status = $response->statusCode();
+        $headers = $response->header();
+        $body = $response->body();
+        $psr = new DiactorosResponse('php://memory', $status, $headers);
+        if (is_string($body)) {
+            $psr->getBody()->write($response->body());
+        }
+        return $psr;
     }
 }

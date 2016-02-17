@@ -50,15 +50,44 @@ class ResponseTransformerTest extends TestCase
 
     public function testToPsrStatusCode()
     {
-        $this->markTestIncomplete();
+        $cake = new CakeResponse(['status' => 403]);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame(403, $result->getStatusCode());
     }
 
     public function testToPsrHeaders()
     {
-        $this->markTestIncomplete();
+        $cake = new CakeResponse(['status' => 403]);
+        $cake->header([
+            'X-testing' => ['one', 'two'],
+            'Location' => 'http://example.com/testing'
+        ]);
+        $result = ResponseTransformer::toPsr($cake);
+        $expected = [
+            'X-testing' => ['one', 'two'],
+            'Location' => ['http://example.com/testing'],
+        ];
+        $this->assertSame($expected, $result->getHeaders());
     }
 
-    public function testToPsrBody()
+    public function testToPsrBodyString()
+    {
+        $cake = new CakeResponse(['status' => 403, 'body' => 'A response for you']);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame($cake->body(), '' . $result->getBody());
+    }
+
+    public function testToPsrBodyCallable()
+    {
+        $cake = new CakeResponse(['status' => 200]);
+        $cake->body(function () {
+            return 'callback response';
+        });
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('callback response', '' . $result->getBody());
+    }
+
+    public function testToPsrBodyFileResponse()
     {
         $this->markTestIncomplete();
     }
