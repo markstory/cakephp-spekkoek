@@ -4,6 +4,8 @@ namespace Spekkoek;
 use Cake\Network\Response as CakeResponse;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
 use Zend\Diactoros\Response as DiactorosResponse;
+use Zend\Diactoros\CallbackStream;
+use Zend\Diactoros\Stream;
 
 /**
  * This class converts PSR7 responses into CakePHP ones and back again.
@@ -76,10 +78,14 @@ class ResponseTransformer
         $status = $response->statusCode();
         $headers = $response->header();
         $body = $response->body();
-        $psr = new DiactorosResponse('php://memory', $status, $headers);
+        $stream = 'php://memory';
         if (is_string($body)) {
-            $psr->getBody()->write($response->body());
+            $stream = new Stream('php://memory', 'wb');
+            $stream->write($response->body());
         }
-        return $psr;
+        if (is_callable($body)) {
+            $stream = new CallbackStream($body);
+        }
+        return new DiactorosResponse($stream, $status, $headers);
     }
 }
