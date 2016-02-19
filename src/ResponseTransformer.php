@@ -86,6 +86,13 @@ class ResponseTransformer
         if (is_callable($body)) {
             $stream = new CallbackStream($body);
         }
+        // This is horrible, but CakePHP doesn't have a getFile() method just yet.
+        $fileProp = new \ReflectionProperty($response, '_file');
+        $fileProp->setAccessible(true);
+        $file = $fileProp->getValue($response);
+        if ($file) {
+            $stream = new Stream($file->path, 'rb');
+        }
         return new DiactorosResponse($stream, $status, $headers);
     }
 }

@@ -8,6 +8,20 @@ use Spekkoek\ResponseTransformer;
 
 class ResponseTransformerTest extends TestCase
 {
+    protected $server;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->server = $_SERVER;
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $_SERVER = $this->server;
+    }
+
     public function testToCakeType()
     {
         $psr = new PsrResponse('php://memory', 401, []);
@@ -89,6 +103,37 @@ class ResponseTransformerTest extends TestCase
 
     public function testToPsrBodyFileResponse()
     {
-        $this->markTestIncomplete();
+        $cake = $this->getMock('Cake\Network\Response', ['_clearBuffer']);
+        $cake->file(__FILE__, ['name' => 'some-file.php', 'download' => true]);
+
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals(
+            'attachment; filename="some-file.php"',
+            $result->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals(
+            'binary',
+            $result->getHeaderLine('Content-Transfer-Encoding')
+        );
+        $this->assertEquals(
+            'bytes',
+            $result->getHeaderLine('Accept-Ranges')
+        );
+        $this->assertContains('<?php', '' . $result->getBody());
+    }
+
+    public function testToPsrBodyFileResponseFileRange()
+    {
+        $_SERVER['HTTP_RANGE'] = 'bytes=10-20';
+        $cake = $this->getMock('Cake\Network\Response', ['_clearBuffer']);
+        $path = dirname(__DIR__) . '/TestApp/asset.css';
+        $cake->file($path, ['name' => 'test-asset.css', 'download' => true]);
+
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals(
+            'bytes 10-20/38',
+            $result->getHeaderLine('Content-Range'),
+            'Content-Range header missing'
+        );
     }
 }
