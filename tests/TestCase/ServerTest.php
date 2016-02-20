@@ -96,4 +96,26 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $server->run();
     }
+
+    /**
+     * Test that emit invokes the appropriate methods on the emitter.
+     *
+     * @return void
+     */
+    public function testEmit()
+    {
+        $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
+        $final = $response
+            ->withHeader('X-First', 'first')
+            ->withHeader('X-Second', 'second');
+
+        $emitter = $this->getMock('Zend\Diactoros\Response\EmitterInterface');
+        $emitter->expects($this->once())
+            ->method('emit')
+            ->with($final);
+
+        $app = new MiddlewareApplication();
+        $server = new Server($app);
+        $server->emit($server->run(null, $response), $emitter);
+    }
 }

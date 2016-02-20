@@ -8,6 +8,7 @@ use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response;
 
 /**
@@ -44,6 +45,14 @@ class Server
             ));
         }
         return $response;
+    }
+
+    public function emit(ResponseInterface $response, EmitterInterface $emitter = null)
+    {
+        if (!$emitter) {
+            $emitter = new SapiStreamEmitter();
+        }
+        $emitter->emit($response);
     }
 
     /**
