@@ -19,7 +19,8 @@ a few new concepts to a CakePHP application that extend and enhance the existing
   a middleware object that helps encapsulate the existing CakePHP dispatch
   process.
 * `Spekkoek\Server` Is the entry point for a request/response. It consumes an
-  application, and emits the response to the server API.
+  application, and returns a response. The server's emit() method can be used
+  to emit a response to the webserver SAPI.
 
 There are PSR7 middleware versions of all the CakePHP core DispatchFilters.
 These are intended to be long term replacements for the CakePHP dispatch
