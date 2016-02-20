@@ -69,7 +69,7 @@ class MiddlewareStackTest extends TestCase
         };
         $two = function () {
         };
-        $three = function() {
+        $three = function () {
         };
 
         $stack = new MiddlewareStack();
