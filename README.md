@@ -43,3 +43,32 @@ Unlike many other plugins, Spekkoek requires a more setup. Because it needs to a
 bootstrapping, requests and responses are handled you'll need to modify your `webroot/index.php`
 
 :warning: Installation examples are not done.
+
+
+## Usage
+
+This plugin fundamentally reworks your application's bootstrap process. It
+requires replacing your `webroot/index.php` and implementing an `Application` class.
+
+### Build the Application class
+
+:warning: Not done.
+
+### Update webroot/index.php
+
+With your `Application` defined, you will need to update your `webroot/index.php`.
+It should look something like the following:
+
+```php
+require dirname(__DIR__) . 'vendor/autoload.php';
+
+use Spekkoek\Server;
+use App\Application;
+
+// Bind your application to the server.
+$server = new Server(new Application());
+
+// Run the request/response through the application
+// and emit the response.
+$server->emit($server->run());
+```
