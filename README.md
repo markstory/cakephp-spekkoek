@@ -1,5 +1,6 @@
 # Spekkoek plugin for CakePHP
 
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://travis-ci.org/markstory/cakephp-spekkoek.svg?branch=master)](https://travis-ci.org/markstory/cakephp-spekkoek)
 [![codecov.io](https://codecov.io/github/markstory/cakephp-spekkoek/coverage.svg?branch=master)](https://codecov.io/github/markstory/cakephp-spekkoek?branch=master)
 
