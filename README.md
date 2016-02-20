@@ -1,5 +1,8 @@
 # Spekkoek plugin for CakePHP
 
+[![Build Status](https://travis-ci.org/markstory/cakephp-spekkoek.svg?branch=master)](https://travis-ci.org/markstory/cakephp-spekkoek)
+[![codecov.io](https://codecov.io/github/markstory/cakephp-spekkoek/coverage.svg?branch=master)](https://codecov.io/github/markstory/cakephp-spekkoek?branch=master)
+
 This plugin is a prototype for adding PSR7 middleware & request/response object
 support to CakePHP. It should be considered experimental and pre-alpha.
 
