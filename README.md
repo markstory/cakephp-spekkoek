@@ -70,7 +70,7 @@ use Spekkoek\Server;
 use App\Application;
 
 // Bind your application to the server.
-$server = new Server(new Application());
+$server = new Server(new Application(dirname(__DIR__) . '/config');
 
 // Run the request/response through the application
 // and emit the response.
