@@ -37,9 +37,6 @@ class ActionDispatcher
 
         $request = $beforeEvent->data['request'];
         if ($beforeEvent->result instanceof Response) {
-            if (isset($request->params['return'])) {
-                return $beforeEvent->result;
-            }
             return $beforeEvent->result;
         }
 
@@ -75,7 +72,7 @@ class ActionDispatcher
 
         $response = $controller->invokeAction();
         if ($response !== null && !($response instanceof Response)) {
-            throw new LogicException('Controller action can only return an instance of Response');
+            throw new LogicException('Controller actions can only Cake\Network\Response instances');
         }
 
         if (!$response && $controller->autoRender) {
