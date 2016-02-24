@@ -25,4 +25,9 @@ class MiddlewareApplication extends BaseApplication
             });
         return $middleware;
     }
+
+    public function __invoke($req, $res, $next)
+    {
+        return $res;
+    }
 }
