@@ -15,6 +15,7 @@ class ServerTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
+        $this->config = dirname(__DIR__);
     }
 
     public function tearDown()
@@ -25,7 +26,7 @@ class ServerTest extends TestCase
 
     public function testAppGetSet()
     {
-        $app = $this->getMock('Spekkoek\BaseApplication');
+        $app = $this->getMock('Spekkoek\BaseApplication', [], [$this->config]);
         $server = new Server($app);
         $this->assertSame($app, $server->getApp($app));
     }
@@ -36,7 +37,7 @@ class ServerTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $request = $request->withHeader('X-pass', 'request header');
 
-        $app = new MiddlewareApplication();
+        $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $res = $server->run($request, $response);
         $this->assertEquals(
@@ -55,7 +56,7 @@ class ServerTest extends TestCase
     {
         $_SERVER['HTTP_X_PASS'] = 'globalvalue';
 
-        $app = new MiddlewareApplication();
+        $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
 
         $res = $server->run();
@@ -72,14 +73,14 @@ class ServerTest extends TestCase
      */
     public function testRunWithApplicationNotMakingMiddleware()
     {
-        $app = new InvalidMiddlewareApplication();
+        $app = new InvalidMiddlewareApplication($this->config);
         $server = new Server($app);
         $server->run();
     }
 
     public function testRunMultipleMiddlewareSuccess()
     {
-        $app = new MiddlewareApplication();
+        $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $res = $server->run();
         $this->assertSame('first', $res->getHeaderLine('X-First'));
@@ -92,7 +93,7 @@ class ServerTest extends TestCase
      */
     public function testRunMiddlewareNoResponse()
     {
-        $app = new BadResponseApplication();
+        $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();
     }
@@ -114,7 +115,7 @@ class ServerTest extends TestCase
             ->method('emit')
             ->with($final);
 
-        $app = new MiddlewareApplication();
+        $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $server->emit($server->run(null, $response), $emitter);
     }
