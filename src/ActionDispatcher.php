@@ -6,6 +6,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Router;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
 use LogicException;
@@ -33,6 +34,7 @@ class ActionDispatcher
 
     public function dispatch(Request $request, Response $response)
     {
+        Router::pushRequest($request);
         $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
         $request = $beforeEvent->data['request'];

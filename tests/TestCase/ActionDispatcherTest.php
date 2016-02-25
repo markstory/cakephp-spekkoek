@@ -5,6 +5,7 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Network\Response;
+use Cake\Routing\Router;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 use Spekkoek\ActionDispatcher;
@@ -14,6 +15,7 @@ class ActionDispatcherTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Router::reload();
         Configure::write('App.namespace', 'Spekkoek\Test\TestApp');
         $this->dispatcher = new ActionDispatcher();
         $this->dispatcher->addFilter(new ControllerFactoryFilter());
@@ -56,7 +58,7 @@ class ActionDispatcherTest extends TestCase
         $this->assertSame($response, $result, 'Should be response from filter.');
     }
 
-    public function testAfterDispatchEventModifyResponse()
+    public function testDispatchAfterDispatchEventModifyResponse()
     {
         $filter = $this->getMock(
             'Cake\Routing\DispatcherFilter',
@@ -84,7 +86,7 @@ class ActionDispatcherTest extends TestCase
         $this->assertSame('Filter body', $result->body(), 'Should be response from filter.');
     }
 
-    public function testActionReturnResponseNoAfterDispatch()
+    public function testDispatchActionReturnResponseNoAfterDispatch()
     {
         $filter = $this->getMock(
             'Cake\Routing\DispatcherFilter',
@@ -107,6 +109,24 @@ class ActionDispatcherTest extends TestCase
         $this->dispatcher->addFilter($filter);
         $result = $this->dispatcher->dispatch($req, $res);
         $this->assertSame('Hello Jane', $result->body(), 'Response from controller.');
+    }
+
+    public function testDispatchSetsRequestContext()
+    {
+        $this->assertNull(Router::getRequest());
+        $req = new Request([
+            'url' => '/cakes',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Cakes',
+                'action' => 'index',
+                'pass' => [],
+                'return' => true,
+            ],
+        ]);
+        $res = new Response();
+        $this->dispatcher->dispatch($req, $res);
+        $this->assertSame($req, Router::getRequest(true));
     }
 
     /**
