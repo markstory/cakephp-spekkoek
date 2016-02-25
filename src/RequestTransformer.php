@@ -55,16 +55,15 @@ class RequestTransformer
      */
     protected static function getParams($request)
     {
-        $attributes = $request->getAttributes();
-        $attributes += ['params' => []];
-        $attributes['params'] += [
+        $params = (array)$request->getAttribute('params', []);
+        $params += [
             'plugin' => null,
             'controller' => null,
             'action' => null,
             '_ext' => null,
             'pass' => []
         ];
-        return $attributes['params'];
+        return $params;
     }
 
     /**
