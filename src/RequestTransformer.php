@@ -32,8 +32,7 @@ class RequestTransformer
         if (!empty($files)) {
             $post = Hash::merge($post, $files);
         }
-        $path = $request->getUri()->getPath();
-        list($base, $webroot) = static::getBase($path, $server);
+        list($base, $webroot) = static::getBase($request);
 
         return new CakeRequest([
             'query' => $request->getQueryParams(),
@@ -41,7 +40,7 @@ class RequestTransformer
             'cookies' => $request->getCookieParams(),
             'environment' => $server,
             'params' => static::getParams($request),
-            'url' => static::getUri($path, $base),
+            'url' => static::getUri($request->getUri()->getPath(), $base),
             'base' => $base,
             'webroot' => $webroot,
         ]);
@@ -130,8 +129,11 @@ class RequestTransformer
      *
      * This code is a copy/paste from Cake\Network\Request::_base()
      */
-    protected static function getBase($path, $server)
+    protected static function getBase($request)
     {
+        $path = $request->getUri()->getPath();
+        $server = $request->getServerParams();
+
         $base = $webroot = $baseUrl = null;
         $config = Configure::read('App');
         extract($config);
