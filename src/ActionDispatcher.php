@@ -42,6 +42,7 @@ class ActionDispatcher
             return $beforeEvent->result;
         }
 
+        // TODO use controller factory here?
         $controller = false;
         if (isset($beforeEvent->data['controller'])) {
             $controller = $beforeEvent->data['controller'];
