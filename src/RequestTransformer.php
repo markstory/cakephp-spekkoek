@@ -122,5 +122,4 @@ class RequestTransformer
             'size' => $file->getSize(),
         ];
     }
-
 }
