@@ -26,6 +26,7 @@ date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
 
 define('APP', __DIR__ . '/TestApp/');
+define('TMP', sys_get_temp_dir());
 
 Configure::write('debug', true);
 Configure::write('App', [
