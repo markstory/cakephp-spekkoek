@@ -41,9 +41,6 @@ abstract class ServerRequestFactory extends BaseFactory
         if (strlen($base) > 0 && strpos($path, $base) === 0) {
             $path = substr($path, strlen($base));
         }
-        if (strpos($path, '?') !== false) {
-            list($path) = explode('?', $path, 2);
-        }
         if (empty($path) || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
@@ -112,18 +109,5 @@ abstract class ServerRequestFactory extends BaseFactory
             }
         }
         return [$base . $file, $webrootDir];
-    }
-
-    /**
-     * Convert the full URI into the application specific one.
-     *
-     * The base directory/script name is removed from $uri to get the application URI.
-     */
-    protected static function getUri($uri, $base)
-    {
-        if (strlen($base) > 0 && strpos($uri, $base) === 0) {
-            $uri = substr($uri, strlen($base));
-        }
-        return $uri;
     }
 }
