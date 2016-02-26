@@ -3,11 +3,11 @@ namespace Spekkoek;
 
 use Spekkoek\BaseApplication;
 use Spekkoek\MiddlewareStack;
+use Spekkoek\ServerRequestFactory;
 use Spekkoek\Runner;
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response;
 
@@ -28,6 +28,8 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
+        // TODO Perhaps include a subclass of the ServerRequestFactory that adds basePath
+        // and webroot to the request.
         $request = $request ?: ServerRequestFactory::fromGlobals();
         $response = $response ?: new Response();
 

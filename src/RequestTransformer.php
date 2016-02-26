@@ -32,7 +32,6 @@ class RequestTransformer
         if (!empty($files)) {
             $post = Hash::merge($post, $files);
         }
-        list($base, $webroot) = static::getBase($request);
 
         return new CakeRequest([
             'query' => $request->getQueryParams(),
@@ -40,9 +39,9 @@ class RequestTransformer
             'cookies' => $request->getCookieParams(),
             'environment' => $server,
             'params' => static::getParams($request),
-            'url' => static::getUri($request->getUri()->getPath(), $base),
-            'base' => $base,
-            'webroot' => $webroot,
+            'url' => $request->getUri()->getPath(),
+            'base' => $request->getAttribute('base', ''),
+            'webroot' => $request->getAttribute('webroot', '/'),
         ]);
     }
 
@@ -124,73 +123,4 @@ class RequestTransformer
         ];
     }
 
-    /**
-     * Calculate the base directory and webroot directory.
-     *
-     * This code is a copy/paste from Cake\Network\Request::_base()
-     */
-    protected static function getBase($request)
-    {
-        $path = $request->getUri()->getPath();
-        $server = $request->getServerParams();
-
-        $base = $webroot = $baseUrl = null;
-        $config = Configure::read('App');
-        extract($config);
-
-        if ($base !== false && $base !== null) {
-            return [$base, $base . '/'];
-        }
-
-        if (!$baseUrl) {
-            $base = dirname(Hash::get($server, 'PHP_SELF'));
-            // Clean up additional / which cause following code to fail..
-            $base = preg_replace('#/+#', '/', $base);
-
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
-            if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
-            }
-            if ($webroot === basename($base)) {
-                $base = dirname($base);
-            }
-
-            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-                $base = '';
-            }
-            $base = implode('/', array_map('rawurlencode', explode('/', $base)));
-            return [$base, $base . '/'];
-        }
-
-        $file = '/' . basename($baseUrl);
-        $base = dirname($baseUrl);
-
-        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-            $base = '';
-        }
-        $webrootDir = $base . '/';
-
-        $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
-
-        if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
-                $webrootDir .= $webroot . '/';
-            }
-        }
-        return [$base . $file, $webrootDir];
-    }
-
-    /**
-     * Convert the full URI into the application specific one.
-     *
-     * The base directory/script name is removed from $uri to get the application URI.
-     */
-    protected static function getUri($uri, $base)
-    {
-        if (strlen($base) > 0 && strpos($uri, $base) === 0) {
-            $uri = substr($uri, strlen($base));
-        }
-        return $uri;
-    }
 }
