@@ -17,13 +17,13 @@ class ControllerFactory
     {
         $pluginPath = $controller = null;
         $namespace = 'Controller';
-        if (!empty($request->params['plugin'])) {
+        if (isset($request->params['plugin'])) {
             $pluginPath = $request->params['plugin'] . '.';
         }
-        if (!empty($request->params['controller'])) {
+        if (isset($request->params['controller'])) {
             $controller = $request->params['controller'];
         }
-        if (!empty($request->params['prefix'])) {
+        if (isset($request->params['prefix'])) {
             if (strpos($request->params['prefix'], '/') === false) {
                 $namespace .= '/' . Inflector::camelize($request->params['prefix']);
             } else {
