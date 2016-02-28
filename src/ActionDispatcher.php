@@ -6,10 +6,11 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Router;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
+use Cake\Routing\Router;
 use LogicException;
+use Spekkoek\ControllerFactory;
 
 /**
  * This class provides compatibility with dispatcher filters
@@ -24,12 +25,18 @@ class ActionDispatcher
 
     protected $filters = [];
 
-    public function __construct()
+    protected $factory;
+
+    /**
+     * @param \Spekkoek\ControllerFactory $factory A controller factory instance.
+     */
+    public function __construct($factory = null)
     {
         // Compatibility with DispatcherFilters.
         foreach (DispatcherFactory::filters() as $filter) {
             $this->addFilter($filter);
         }
+        $this->factory = $factory ?: new ControllerFactory();
     }
 
     public function dispatch(Request $request, Response $response)
@@ -41,22 +48,7 @@ class ActionDispatcher
         if ($beforeEvent->result instanceof Response) {
             return $beforeEvent->result;
         }
-
-        // TODO use controller factory here?
-        $controller = false;
-        if (isset($beforeEvent->data['controller'])) {
-            $controller = $beforeEvent->data['controller'];
-        }
-
-        if (!($controller instanceof Controller)) {
-            throw new MissingControllerException([
-                'class' => $request->params['controller'],
-                'plugin' => empty($request->params['plugin']) ? null : $request->params['plugin'],
-                'prefix' => empty($request->params['prefix']) ? null : $request->params['prefix'],
-                '_ext' => empty($request->params['_ext']) ? null : $request->params['_ext']
-            ]);
-        }
-
+        $controller = $this->factory->create($request, $response);
         $response = $this->_invoke($controller);
         if (isset($request->params['return'])) {
             return $response;
