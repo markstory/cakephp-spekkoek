@@ -6,11 +6,11 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Router;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
-use Spekkoek\ControllerFactory;
+use Cake\Routing\Router;
 use LogicException;
+use Spekkoek\ControllerFactory;
 
 /**
  * This class provides compatibility with dispatcher filters
