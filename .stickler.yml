@@ -1,0 +1,3 @@
+linters:
+  php:
+    standard: CakePHP
