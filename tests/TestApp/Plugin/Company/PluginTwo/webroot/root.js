@@ -1,0 +1,1 @@
+alert('company root.js');
