@@ -9,6 +9,10 @@ use Zend\Diactoros\Stream;
 
 /**
  * Handles serving plugin assets in development mode.
+ *
+ * This should not be used in production environments as it
+ * has sub-optimal performance when compared to serving files
+ * with a real webserver.
  */
 class AssetMiddleware
 {
