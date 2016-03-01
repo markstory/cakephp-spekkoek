@@ -2,7 +2,9 @@
 namespace Spekkoek\Middleware;
 
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
@@ -24,8 +26,8 @@ class AssetMiddleware
      */
     public function __construct(array $options = [])
     {
-        if (!empty($config['cacheTime'])) {
-            $this->cacheTime = $config['cacheTime'];
+        if (!empty($options['cacheTime'])) {
+            $this->cacheTime = $options['cacheTime'];
         }
     }
 
@@ -49,16 +51,30 @@ class AssetMiddleware
             return $next($request, $response);
         }
 
-        /* TODO re-enable this
-        $response->modified(filemtime($assetFile));
-        if ($response->checkNotModified($request)) {
-            return $response;
+        $file = new File($assetFile);
+        $modifiedTime = $file->lastChange();
+        if ($this->isNotModified($request, $file)) {
+            $headers = $response->getHeaders();
+            $headers['Last-Modified'] = date(DATE_RFC850, $modifiedTime);
+            return new Response('php://memory', 304, $headers);
         }
-         */
+        return $this->_deliverAsset($request, $response, $file);
+    }
 
-        $pathSegments = explode('.', $url);
-        $ext = array_pop($pathSegments);
-        return $this->_deliverAsset($request, $response, $assetFile, $ext);
+    /**
+     * Check the not modified header.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to check.
+     * @param \Cake\Filesystem\File $file The file object to compare.
+     * @return bool
+     */
+    protected function isNotModified($request, $file)
+    {
+        $modifiedSince = $request->getHeaderLine('If-Modified-Since');
+        if (!$modifiedSince) {
+            return false;
+        }
+        return strtotime($modifiedSince) === $file->lastChange();
     }
 
     /**
@@ -84,6 +100,7 @@ class AssetMiddleware
                 return $pluginWebroot . $fileFragment;
             }
         }
+        return '';
     }
 
     /**
@@ -91,33 +108,22 @@ class AssetMiddleware
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object to use.
      * @param \Psr\Http\Message\ResponseInterface $response The response object to use.
-     * @param string $assetFile Path to the asset file in the file system
-     * @param string $ext The extension of the file to determine its mime type
-     * @return void
+     * @param \Cake\Filesystem\File $file The file wrapper for the file.
+     * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
      */
-    protected function _deliverAsset($request, $response, $assetFile, $ext)
+    protected function _deliverAsset($request, $response, $file)
     {
-        /* Re-enable this as it makes sense
-        $compressionEnabled = $response->compress();
-        if ($response->type($ext) === $ext) {
-            $contentType = 'application/octet-stream';
-            $agent = $request->env('HTTP_USER_AGENT');
-            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
-                $contentType = 'application/octetstream';
-            }
-            $response->type($contentType);
-        }
-        if (!$compressionEnabled) {
-            $response->header('Content-Length', filesize($assetFile));
-        }
-        $response->cache(filemtime($assetFile), $this->_cacheTime);
-        $response->sendHeaders();
-        readfile($assetFile);
-        if ($compressionEnabled) {
-            ob_end_flush();
-        }
-        */
-        $stream = new Stream(fopen($assetFile, 'rb'));
-        return $response->withBody($stream);
+        $contentType = $file->mime() ?: 'application/octet-stream';
+        $modified = $file->lastChange();
+        $expire = strtotime($this->cacheTime);
+        $maxAge = $expire - time();
+
+        $stream = new Stream(fopen($file->path, 'rb'));
+        return $response->withBody($stream)
+            ->withHeader('Content-Type', $contentType)
+            ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
+            ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
+            ->withHeader('Last-Modified', gmdate('D, j M Y G:i:s \G\M\T', $modified))
+            ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
     }
 }
