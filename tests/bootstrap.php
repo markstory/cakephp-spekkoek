@@ -41,4 +41,7 @@ Configure::write('App', [
     'imageBaseUrl' => 'img/',
     'jsBaseUrl' => 'js/',
     'cssBaseUrl' => 'css/',
+    'paths' => [
+        'plugins' => [APP . 'Plugin' . DS],
+    ]
 ]);
