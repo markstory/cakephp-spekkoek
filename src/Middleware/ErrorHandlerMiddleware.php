@@ -1,6 +1,7 @@
 <?php
 namespace Spekkoek\Middleware;
 
+use Cake\Core\App;
 use Exception;
 use Spekkoek\ResponseTransformer;
 
@@ -12,12 +13,12 @@ class ErrorHandlerMiddleware
     /**
      * Constructor
      *
-     * @param string|callable $renderer The renderer or class name 
+     * @param string|callable $renderer The renderer or class name
      *   to use or a callable factory.
      */
     public function __construct($renderer = null)
     {
-        $this->renderer = $renderer ?: 'Cake\Error\ErrorHandler';
+        $this->renderer = $renderer ?: 'Cake\Error\ExceptionRenderer';
     }
 
     /**
@@ -47,7 +48,7 @@ class ErrorHandlerMiddleware
      */
     public function handleException($exception, $request, $response)
     {
-        $renderer = $this->getRenderer();
+        $renderer = $this->getRenderer($exception);
         try {
             $response = $renderer->render();
             return ResponseTransformer::toPsr($response);
@@ -74,7 +75,7 @@ class ErrorHandlerMiddleware
         if (is_string($this->renderer)) {
             $class = App::className($this->renderer, 'Error');
             if (!$class) {
-                throw new \Exception("The '{$this->renderer}' class could not be found.");
+                throw new \Exception("The '{$this->renderer}' renderer class could not be found.");
             }
             return new $class($exception);
         }
