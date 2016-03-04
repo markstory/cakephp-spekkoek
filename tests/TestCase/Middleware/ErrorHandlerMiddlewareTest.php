@@ -5,9 +5,9 @@ use Cake\Core\Configure;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use Spekkoek\Middleware\ErrorHandlerMiddleware;
-use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Test for ErrorHandlerMiddleware
