@@ -6,7 +6,10 @@ use Exception;
 use Spekkoek\ResponseTransformer;
 
 /**
- * Error handling middleware
+ * Error handling middleware.
+ *
+ * Traps exceptions and converts them into HTML or content-type appropriate
+ * error pages using the CakePHP ExceptionRenderer.
  */
 class ErrorHandlerMiddleware
 {
