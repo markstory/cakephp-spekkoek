@@ -80,8 +80,19 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertEquals("A 400 series error!\n", '' . $result->getBody());
     }
 
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
     public function testHandleExceptionRenderingFails()
     {
-        $this->markTestIncomplete();
+        Configure::write('App.namespace', 'TestApp');
+
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $middleware = new ErrorHandlerMiddleware();
+        $next = function ($req, $res) {
+            throw new \Cake\Network\Exception\ServiceUnavailableException('whoops');
+        };
+        $middleware($request, $response, $next);
     }
 }
