@@ -28,8 +28,6 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
-        // TODO Perhaps include a subclass of the ServerRequestFactory that adds basePath
-        // and webroot to the request.
         $request = $request ?: ServerRequestFactory::fromGlobals();
         $response = $response ?: new Response();
 
