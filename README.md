@@ -66,7 +66,7 @@ in it:
 
 ```php
 <?php
-namespace App
+namespace App;
 
 use Spekkoek\BaseApplication;
 use Spekkoek\Middleware\AssetMiddleware;
