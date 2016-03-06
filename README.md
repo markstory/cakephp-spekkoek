@@ -96,8 +96,8 @@ class Application extends BaseApplication
 
 ### Update webroot/index.php
 
-With your `Application` defined, you will need to update your `webroot/index.php`.
-It should look something like the following:
+With your `Application` defined, you will need to update your
+`webroot/index.php`.  It should look something like the following:
 
 ```php
 require dirname(__DIR__) . 'vendor/autoload.php';
