@@ -41,22 +41,58 @@ The last middleware object in Spekkoek stack should always be the `Application`.
 
 :warning: Examples needed.
 
-## Installation
-
-Unlike many other plugins, Spekkoek requires a more setup. Because it needs to augment how
-bootstrapping, requests and responses are handled you'll need to modify your `webroot/index.php`
-
-:warning: Installation examples are not done.
-
-
 ## Usage
 
 This plugin fundamentally reworks your application's bootstrap process. It
 requires replacing your `webroot/index.php` and implementing an `Application` class.
 
+## Installation & Getting Started
+
+Unlike many other plugins, Spekkoek requires a more setup. Because it needs to augment how
+bootstrapping, requests and responses are handled you'll need to modify your `webroot/index.php`
+
+Install the plugin with `composer`:
+
+```
+composer require "markstory/cakephp-spekkoek:dev-master"
+```
+
+Next update your `webroot/index.php` to update
+
 ### Build the Application class
 
-:warning: Not done.
+In your application's `src` directory create `src/Application.php` and put the following
+in it:
+
+```php
+<?php
+namespace App
+
+use Spekkoek\BaseApplication;
+use Spekkoek\Middleware\AssetMiddleware;
+use Spekkoek\Middleware\ErrorHandlerMiddleware;
+use Spekkoek\Middleware\RoutingMiddleware;
+
+class Application extends BaseApplication
+{
+    public function middleware($middleware)
+    {
+        // Catch any exceptions in the lower layers,
+        // and make an error page/response
+        $middleware->add(new ErrorHandlerMiddleware());
+
+        // Handle plugin/theme assets like CakePHP normally does.
+        $middleware->add(new AssetMiddleware());
+
+        // Apply routing
+        $middleware->add(new RoutingMiddleware());
+
+        // Run the application
+        $middleware->add($this);
+        return $middleware;
+    }
+}
+```
 
 ### Update webroot/index.php
 
