@@ -8,6 +8,7 @@ use Spekkoek\Runner;
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response\SapiStreamEmitter;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response;
 
