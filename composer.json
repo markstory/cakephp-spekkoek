@@ -2,6 +2,7 @@
     "name": "markstory/cakephp-spekkoek",
     "description": "Prototype implementation of PSR7 middleware for CakePHP.",
     "type": "cakephp-plugin",
+    "license": "MIT",
     "require": {
         "php": ">=5.5.9",
         "zendframework/zend-diactoros": "*",
