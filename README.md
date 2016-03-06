@@ -79,16 +79,16 @@ class Application extends BaseApplication
     {
         // Catch any exceptions in the lower layers,
         // and make an error page/response
-        $middleware->add(new ErrorHandlerMiddleware());
+        $middleware->push(new ErrorHandlerMiddleware());
 
         // Handle plugin/theme assets like CakePHP normally does.
-        $middleware->add(new AssetMiddleware());
+        $middleware->push(new AssetMiddleware());
 
         // Apply routing
-        $middleware->add(new RoutingMiddleware());
+        $middleware->push(new RoutingMiddleware());
 
         // Run the application
-        $middleware->add($this);
+        $middleware->push($this);
         return $middleware;
     }
 }
@@ -100,7 +100,7 @@ With your `Application` defined, you will need to update your
 `webroot/index.php`.  It should look something like the following:
 
 ```php
-require dirname(__DIR__) . 'vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 use Spekkoek\Server;
 use App\Application;
