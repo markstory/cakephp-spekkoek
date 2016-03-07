@@ -120,7 +120,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware($request, $response, $next);
 
         $this->assertEquals(
-            'text/plain',
+            'application/javascript',
             $res->getHeaderLine('Content-Type')
         );
         $this->assertEquals(
@@ -138,6 +138,23 @@ class AssetMiddlewareTest extends TestCase
         $this->assertEquals(
             gmdate('D, j M Y G:i:s ', $expires) . 'GMT',
             $res->getHeaderLine('Expires')
+        );
+    }
+
+    public function testCustomFileTypes()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/root.js']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+
+        $middleware = new AssetMiddleware(['types' => ['js' => 'custom/stuff']]);
+        $res = $middleware($request, $response, $next);
+
+        $this->assertEquals(
+            'custom/stuff',
+            $res->getHeaderLine('Content-Type')
         );
     }
 

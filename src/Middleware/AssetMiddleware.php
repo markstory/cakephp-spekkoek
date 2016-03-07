@@ -24,6 +24,26 @@ class AssetMiddleware
     protected $cacheTime = '+1 day';
 
     /**
+     * A extension to content type mapping for plain text types.
+     *
+     * Because finfo doesn't give useful information for plain text types,
+     * we have to handle that here.
+     *
+     * @var array
+     */
+    protected $typeMap = [
+        'css' => 'text/css',
+        'json' => 'application/json',
+        'js' => 'application/javascript',
+        'ico' => 'image/x-icon',
+        'eot' => 'application/vnd.ms-fontobject',
+        'svg' => 'image/svg+xml',
+        'html' => 'text/html',
+        'rss' => 'application/rss+xml',
+        'xml' => 'application/xml',
+    ];
+
+    /**
      * Constructor.
      *
      * @param array $options The options to use
@@ -32,6 +52,9 @@ class AssetMiddleware
     {
         if (!empty($options['cacheTime'])) {
             $this->cacheTime = $options['cacheTime'];
+        }
+        if (!empty($options['types'])) {
+            $this->typeMap = array_merge($this->typeMap, $options['types']);
         }
     }
 
@@ -62,7 +85,7 @@ class AssetMiddleware
             $headers['Last-Modified'] = date(DATE_RFC850, $modifiedTime);
             return new Response('php://memory', 304, $headers);
         }
-        return $this->_deliverAsset($request, $response, $file);
+        return $this->deliverAsset($request, $response, $file);
     }
 
     /**
@@ -115,9 +138,9 @@ class AssetMiddleware
      * @param \Cake\Filesystem\File $file The file wrapper for the file.
      * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
      */
-    protected function _deliverAsset($request, $response, $file)
+    protected function deliverAsset($request, $response, $file)
     {
-        $contentType = $file->mime() ?: 'application/octet-stream';
+        $contentType = $this->getType($file);
         $modified = $file->lastChange();
         $expire = strtotime($this->cacheTime);
         $maxAge = $expire - time();
@@ -129,5 +152,14 @@ class AssetMiddleware
             ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
             ->withHeader('Last-Modified', gmdate('D, j M Y G:i:s \G\M\T', $modified))
             ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
+    }
+
+    protected function getType($file)
+    {
+        $extension = $file->ext();
+        if (isset($this->typeMap[$extension])) {
+            return $this->typeMap[$extension];
+        }
+        return $file->mime() ?: 'application/octet-stream';
     }
 }
