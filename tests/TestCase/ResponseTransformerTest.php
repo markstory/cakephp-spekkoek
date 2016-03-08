@@ -22,7 +22,7 @@ class ResponseTransformerTest extends TestCase
         $_SERVER = $this->server;
     }
 
-    public function testToCakeType()
+    public function testToCakeCorrectType()
     {
         $psr = new PsrResponse('php://memory', 401, []);
         $result = ResponseTransformer::toCake($psr);
@@ -69,6 +69,14 @@ class ResponseTransformerTest extends TestCase
         $this->assertSame(403, $result->getStatusCode());
     }
 
+    public function testToPsrContentType()
+    {
+        $cake = new CakeResponse();
+        $cake->type('js');
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('application/javascript', $result->getHeaderLine('Content-Type'));
+    }
+
     public function testToPsrHeaders()
     {
         $cake = new CakeResponse(['status' => 403]);
@@ -80,6 +88,7 @@ class ResponseTransformerTest extends TestCase
         $expected = [
             'X-testing' => ['one', 'two'],
             'Location' => ['http://example.com/testing'],
+            'Content-Type' => ['text/html'],
         ];
         $this->assertSame($expected, $result->getHeaders());
     }

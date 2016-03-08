@@ -77,6 +77,9 @@ class ResponseTransformer
     {
         $status = $response->statusCode();
         $headers = $response->header();
+        if (!isset($headers['Content-Type'])) {
+            $headers['Content-Type'] = $response->type();
+        }
         $body = $response->body();
         $stream = 'php://memory';
         if (is_string($body)) {
