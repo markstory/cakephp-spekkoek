@@ -33,14 +33,18 @@ abstract class BaseApplication
         $cakeRequest = RequestTransformer::toCake($request);
         $cakeResponse = ResponseTransformer::toCake($response);
 
-        // - Create the application Dispatcher.
-        // - Dispatch the request/response
+        // Dispatch the request/response to CakePHP
         $cakeResponse = $this->getDispatcher()->dispatch($cakeRequest, $cakeResponse);
 
-        // - Convert the response back into a PSR7 object.
-        return ResponseTransformer::toPsr($cakeResponse);
+        // Convert the response back into a PSR7 object.
+        return $next($request, ResponseTransformer::toPsr($cakeResponse));
     }
 
+    /**
+     * Get the ActionDispatcher.
+     *
+     * @return \Spekkoek\ActionDispatcher
+     */
     protected function getDispatcher()
     {
         return new ActionDispatcher();
