@@ -87,8 +87,8 @@ class Application extends BaseApplication
         // Apply routing
         $middleware->push(new RoutingMiddleware());
 
-        // Run the application
-        $middleware->push($this);
+        // The application is bound into the middleware
+        // stack by the Server
         return $middleware;
     }
 }
