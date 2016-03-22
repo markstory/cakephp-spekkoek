@@ -119,4 +119,17 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $server->emit($server->run(null, $response), $emitter);
     }
+
+    public function testBuildMiddlewareEvent()
+    {
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+        $called = false;
+        $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) use (&$called) {
+            $called = true;
+            $this->assertInstanceOf('Spekkoek\MiddlewareStack', $middleware);
+        });
+        $server->run();
+        $this->assertTrue($called, 'Event not triggered.');
+    }
 }
