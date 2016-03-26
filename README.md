@@ -5,9 +5,7 @@
 [![codecov.io](https://codecov.io/github/markstory/cakephp-spekkoek/coverage.svg?branch=master)](https://codecov.io/github/markstory/cakephp-spekkoek?branch=master)
 
 This plugin is a prototype for adding PSR7 middleware & request/response object
-support to CakePHP. It should be considered experimental and pre-alpha.
-
-:warning: This project is far from complete, and experimental at best :warning:
+support to CakePHP. It should be considered experimental.
 
 ## Concepts
 
@@ -35,11 +33,38 @@ filters.
 Middleware is a closure or callable object that accepts a request/response and
 returns a response. Each middleware is also provided the next callable in the chain.
 This callable should be invoked if/when you want to delegate the response creation to the
-next middleware object.
+next middleware object. Middleware objects need to implement the following protocol:
 
-The last middleware object in Spekkoek stack should always be the `Application`.
+```php
+public function __invoke($request, $response, $next)
+```
 
-:warning: Examples needed.
+Middleware objects *must* return a Response object. They can either augment the
+existing response object or create a new one, or delegate to the next
+middleware object by calling `$next`. A trivial example of middleware would be:
+
+```php
+use Cake\Log\Log;
+class TimingMiddleware
+{
+    public function __invoke($request, $response, $next)
+    {
+        $start = microtime(true);
+        $response = $next($request, $response);
+        $end = microtime(true);
+        Log::info(sprintf(
+            'Request to %s took %f seconds',
+            $request->getUri()->getPath(),
+            ($end - $start)
+        ));
+        return $response;
+    }
+}
+```
+
+Here we can see the `$next` object in action and also how to put some simple
+logic before and after the lower layers.
+
 
 ## Usage
 
