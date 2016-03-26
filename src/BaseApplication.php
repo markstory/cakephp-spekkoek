@@ -1,18 +1,23 @@
 <?php
 namespace Spekkoek;
 
-use Spekkoek\ActionDispatcher;
-use Spekkoek\RequestTransformer;
-use Spekkoek\ResponseTransformer;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class BaseApplication
 {
+
+    /**
+     * @var string Contains the path of the config directory
+     */
     protected $configDir;
 
     public function __construct($configDir)
     {
         $this->configDir = $configDir;
     }
+
+    abstract public function middleware($middleware);
 
     /**
      * Load all the application configuration and bootstrap logic.
@@ -25,9 +30,7 @@ abstract class BaseApplication
         // Load other config files your application needs.
     }
 
-    abstract public function middleware($middleware);
-
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         // Convert the request/response to CakePHP equivalents.
         $cakeRequest = RequestTransformer::toCake($request);

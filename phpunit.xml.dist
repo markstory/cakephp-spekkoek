@@ -6,7 +6,7 @@
     syntaxCheck="false"
     bootstrap="./tests/bootstrap.php"
     >
-    <php>
+    <php>p
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
     </php>

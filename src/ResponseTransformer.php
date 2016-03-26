@@ -15,11 +15,12 @@ use Zend\Diactoros\Stream;
  */
 class ResponseTransformer
 {
+
     /**
      * Convert a PSR7 Response into a CakePHP one.
      *
-     * @param Psr\Http\Message\ResponseInterface $response The response to convert.
-     * @return Cake\Network\Response The equivalent CakePHP response
+     * @param PsrResponse $response The response to convert.
+     * @return CakeResponse The equivalent CakePHP response
      */
     public static function toCake(PsrResponse $response)
     {
@@ -35,10 +36,10 @@ class ResponseTransformer
     /**
      * Get the response body from a PSR7 Response.
      *
-     * @param Psr\Http\Message\ResponseInterface $response The response to convert.
+     * @param PsrResponse $response The response to convert.
      * @return string The response body.
      */
-    protected static function getBody($response)
+    protected static function getBody(PsrResponse $response)
     {
         $stream = $response->getBody();
         if ($stream->getSize() === 0) {
@@ -51,10 +52,10 @@ class ResponseTransformer
     /**
      * Convert a PSR7 Response headers into a flat array
      *
-     * @param Psr\Http\Message\ResponseInterface $response The response to convert.
-     * @return Cake\Network\Response The equivalent CakePHP response
+     * @param PsrResponse $response The response to convert.
+     * @return CakeResponse The equivalent CakePHP response
      */
-    protected static function collapseHeaders($response)
+    protected static function collapseHeaders(PsrResponse $response)
     {
         $out = [];
         foreach ($response->getHeaders() as $name => $value) {
@@ -70,8 +71,8 @@ class ResponseTransformer
     /**
      * Convert a CakePHP response into a PSR7 one.
      *
-     * @param Cake\Network\Response $response The CakePHP response to convert
-     * @param Psr\Http\Message\ResponseInterface $response The equivalent PSR7 response.
+     * @param CakeResponse $response The CakePHP response to convert
+     * @return PsrResponse $response The equivalent PSR7 response.
      */
     public static function toPsr(CakeResponse $response)
     {

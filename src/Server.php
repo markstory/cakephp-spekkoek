@@ -2,10 +2,6 @@
 namespace Spekkoek;
 
 use Cake\Event\EventDispatcherTrait;
-use Spekkoek\BaseApplication;
-use Spekkoek\MiddlewareStack;
-use Spekkoek\ServerRequestFactory;
-use Spekkoek\Runner;
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -18,9 +14,18 @@ use Zend\Diactoros\Response;
  */
 class Server
 {
+
     use EventDispatcherTrait;
 
+    /**
+     * @var BaseApplication
+     */
     protected $app;
+
+    /**
+     * @var Runner
+     */
+    protected $runner;
 
     public function __construct(BaseApplication $app)
     {
@@ -39,9 +44,9 @@ class Server
      *   from event listeners.
      * - Run the middleware stack including the application.
      *
-     * @param \Psr\Http\ServerRequestInterface $request The request to use or null.
-     * @param \Psr\Http\ResponseInterface $response The response to use or null.
-     * @return \Psr\Http\ResponseInterface
+     * @param \Psr\Http\Message\ServerRequestInterface $request  The request to use or null.
+     * @param \Psr\Http\Message\ResponseInterface      $response The response to use or null.
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
@@ -77,7 +82,7 @@ class Server
     /**
      * Set the application.
      *
-     * @param Spekkoek\BaseApplication $app The application to set.
+     * @param BaseApplication $app The application to set.
      */
     public function setApp(BaseApplication $app)
     {
@@ -87,9 +92,9 @@ class Server
     /**
      * Get the current application.
      *
-     * @return Spekkoek\BaseApplication The application that will be run.
+     * @return BaseApplication The application that will be run.
      */
-    public function getApp(BaseApplication $app)
+    public function getApp()
     {
         return $this->app;
     }

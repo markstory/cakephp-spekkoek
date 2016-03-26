@@ -3,6 +3,8 @@ namespace Spekkoek\Middleware;
 
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
 /**
@@ -11,13 +13,13 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 class RoutingMiddleware
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         try {
             $params = (array)$request->getAttribute('params', []);
             if (empty($params['controller'])) {
                 $path = $request->getUri()->getPath();
-                $request = $request->withAttribute('params', Router::parse($path, $request->getMethod()));
+                $request = $request->withAttribute('params', Router::parse($path));
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
