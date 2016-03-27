@@ -18,6 +18,12 @@ class Runner
      */
     protected $middleware;
 
+    /**
+     * @param MiddlewareStack        $middleware The middleware stack
+     * @param ServerRequestInterface $request The Server Request
+     * @param ResponseInterface      $response The response
+     * @return ResponseInterface Return the response object
+     */
     public function run(MiddlewareStack $middleware, ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->middleware = $middleware;
@@ -26,8 +32,8 @@ class Runner
     }
 
     /**
-     * @param ServerRequestInterface $request The server request
-     * @param ResponseInterface      $response
+     * @param ServerRequestInterface $request  The server request
+     * @param ResponseInterface      $response The response object
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)

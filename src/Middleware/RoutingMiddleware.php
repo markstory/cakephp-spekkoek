@@ -17,7 +17,7 @@ class RoutingMiddleware
     /**
      * @param ServerRequestInterface $request  The request.
      * @param ResponseInterface      $response The response.
-     * @param callable               $next
+     * @param callable               $next     The next middleware to call
      * @return RedirectResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
