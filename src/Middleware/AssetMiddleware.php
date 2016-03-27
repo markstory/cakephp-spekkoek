@@ -156,6 +156,12 @@ class AssetMiddleware
             ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
     }
 
+    /**
+     * Return the type from a File object
+     *
+     * @param File $file The file from which you get the type
+     * @return string
+     */
     protected function getType(File $file)
     {
         $extension = $file->ext();

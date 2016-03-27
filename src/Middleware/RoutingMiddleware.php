@@ -13,13 +13,20 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 class RoutingMiddleware
 {
+
+    /**
+     * @param ServerRequestInterface $request  The request.
+     * @param ResponseInterface      $response The response.
+     * @param callable               $next
+     * @return RedirectResponse
+     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         try {
             $params = (array)$request->getAttribute('params', []);
             if (empty($params['controller'])) {
                 $path = $request->getUri()->getPath();
-                $request = $request->withAttribute('params', Router::parse($path));
+                $request = $request->withAttribute('params', Router::parse($path, $request->getMethod()));
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(

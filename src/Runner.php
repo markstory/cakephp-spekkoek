@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Runner
 {
+
     protected $index;
 
     /**
@@ -25,7 +26,7 @@ class Runner
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface $request The server request
      * @param ResponseInterface      $response
      * @return ResponseInterface
      */

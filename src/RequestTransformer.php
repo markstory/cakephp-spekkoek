@@ -5,7 +5,6 @@ use Cake\Core\Configure;
 use Cake\Network\Request as CakeRequest;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Translate and transform from PSR7 requests into CakePHP requests.
@@ -52,7 +51,7 @@ class RequestTransformer
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to extract params from.
      * @return array The routing parameters.
      */
-    protected static function getParams(ServerRequestInterface $request)
+    protected static function getParams(PsrRequest $request)
     {
         $params = (array)$request->getAttribute('params', []);
         $params += [

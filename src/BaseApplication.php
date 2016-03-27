@@ -17,7 +17,11 @@ abstract class BaseApplication
         $this->configDir = $configDir;
     }
 
-    abstract public function middleware($middleware);
+    /**
+     * @param MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @return mixed
+     */
+    abstract public function middleware(MiddlewareStack $middleware);
 
     /**
      * Load all the application configuration and bootstrap logic.
@@ -30,6 +34,13 @@ abstract class BaseApplication
         // Load other config files your application needs.
     }
 
+    /**
+     *
+     * @param ServerRequestInterface $request  A server request object
+     * @param ResponseInterface      $response A response object
+     * @param callable               $next     The next middleware to be executed
+     * @return mixed
+     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         // Convert the request/response to CakePHP equivalents.
