@@ -3,8 +3,18 @@ namespace Spekkoek;
 
 use Countable;
 
+/**
+ * Provides methods for creating and manipulating a 'stack' of
+ * middleware callables. This stack is used to process a request and response
+ * via \Spekkoek\Runner.
+ */
 class MiddlewareStack implements Countable
 {
+    /**
+     * The stack of middleware callables.
+     *
+     * @var array
+     */
     protected $stack = [];
 
     /**
