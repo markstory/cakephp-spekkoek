@@ -4,6 +4,8 @@ namespace Spekkoek\Middleware;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
@@ -138,7 +140,7 @@ class AssetMiddleware
      * @param \Cake\Filesystem\File $file The file wrapper for the file.
      * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
      */
-    protected function deliverAsset($request, $response, $file)
+    protected function deliverAsset(ServerRequestInterface $request, ResponseInterface $response, File $file)
     {
         $contentType = $this->getType($file);
         $modified = $file->lastChange();
@@ -154,7 +156,13 @@ class AssetMiddleware
             ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
     }
 
-    protected function getType($file)
+    /**
+     * Return the type from a File object
+     *
+     * @param File $file The file from which you get the type
+     * @return string
+     */
+    protected function getType(File $file)
     {
         $extension = $file->ext();
         if (isset($this->typeMap[$extension])) {

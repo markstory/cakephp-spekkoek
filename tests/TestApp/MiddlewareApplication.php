@@ -2,10 +2,16 @@
 namespace Spekkoek\Test\TestApp;
 
 use Spekkoek\BaseApplication;
+use Spekkoek\MiddlewareStack;
 
 class MiddlewareApplication extends BaseApplication
 {
-    public function middleware($middleware)
+
+    /**
+     * @param \Spekkoek\MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @return \Spekkoek\MiddlewareStack
+     */
+    public function middleware(MiddlewareStack $middleware)
     {
         $middleware
             ->push(function ($req, $res, $next) {

@@ -51,7 +51,7 @@ class RequestTransformer
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to extract params from.
      * @return array The routing parameters.
      */
-    protected static function getParams($request)
+    protected static function getParams(PsrRequest $request)
     {
         $params = (array)$request->getAttribute('params', []);
         $params += [

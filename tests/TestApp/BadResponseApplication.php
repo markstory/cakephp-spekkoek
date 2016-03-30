@@ -2,10 +2,16 @@
 namespace Spekkoek\Test\TestApp;
 
 use Spekkoek\BaseApplication;
+use Spekkoek\MiddlewareStack;
 
 class BadResponseApplication extends BaseApplication
 {
-    public function middleware($middleware)
+
+    /**
+     * @param MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @return MiddlewareStack
+     */
+    public function middleware(MiddlewareStack $middleware)
     {
         $middleware->push(function ($req, $res, $next) {
             return 'Not a response';

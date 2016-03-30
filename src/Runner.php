@@ -10,16 +10,32 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Runner
 {
+
     protected $index;
+
+    /**
+     * @var MiddlewareStack
+     */
     protected $middleware;
 
-    public function run($middleware, ServerRequestInterface $request, ResponseInterface $response)
+    /**
+     * @param MiddlewareStack        $middleware The middleware stack
+     * @param ServerRequestInterface $request The Server Request
+     * @param ResponseInterface      $response The response
+     * @return ResponseInterface Return the response object
+     */
+    public function run(MiddlewareStack $middleware, ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->middleware = $middleware;
         $this->index = 0;
         return $this->__invoke($request, $response);
     }
 
+    /**
+     * @param ServerRequestInterface $request  The server request
+     * @param ResponseInterface      $response The response object
+     * @return ResponseInterface
+     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $next = $this->middleware->get($this->index);

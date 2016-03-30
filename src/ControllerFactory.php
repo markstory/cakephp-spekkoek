@@ -16,7 +16,7 @@ class ControllerFactory
     /**
      * Create a controller for a given request/response
      *
-     * @param \Cake\Network\Request $request The request to build a contorller for.
+     * @param \Cake\Network\Request $request The request to build a controller for.
      * @param \Cake\Network\Response $response The response to use.
      * @return \Cake\Controller\Controller
      */
