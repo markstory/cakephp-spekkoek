@@ -19,12 +19,12 @@ class Runner
     protected $middleware;
 
     /**
-     * @param MiddlewareStack        $middleware The middleware stack
-     * @param ServerRequestInterface $request The Server Request
-     * @param ResponseInterface      $response The response
-     * @return ResponseInterface Return the response object
+     * @param \Spekkoek\MiddlewareStack $middleware The middleware stack
+     * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
+     * @param \Psr\Http\Message\ResponseInterface $response The response
+     * @return \Psr\Http\Message\ResponseInterface A response object
      */
-    public function run(MiddlewareStack $middleware, ServerRequestInterface $request, ResponseInterface $response)
+    public function run($middleware, ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->middleware = $middleware;
         $this->index = 0;
@@ -32,9 +32,9 @@ class Runner
     }
 
     /**
-     * @param ServerRequestInterface $request  The server request
-     * @param ResponseInterface      $response The response object
-     * @return ResponseInterface
+     * @param \Psr\Http\Message\ServerRequestInterface $request  The server request
+     * @param \Psr\Http\Message\ResponseInterface $response The response object
+     * @return \Psr\Http\Message\ResponseInterface An updated response
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {

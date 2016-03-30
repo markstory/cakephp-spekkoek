@@ -1,8 +1,9 @@
 <?php
 namespace Spekkoek\Test\TestApp;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Spekkoek\BaseApplication;
-use Spekkoek\MiddlewareStack;
 
 class MiddlewareApplication extends BaseApplication
 {
@@ -11,7 +12,7 @@ class MiddlewareApplication extends BaseApplication
      * @param \Spekkoek\MiddlewareStack $middleware The middleware stack to set in your App Class
      * @return \Spekkoek\MiddlewareStack
      */
-    public function middleware(MiddlewareStack $middleware)
+    public function middleware($middleware)
     {
         $middleware
             ->push(function ($req, $res, $next) {
@@ -32,7 +33,7 @@ class MiddlewareApplication extends BaseApplication
         return $middleware;
     }
 
-    public function __invoke($req, $res, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, $next)
     {
         return $res;
     }

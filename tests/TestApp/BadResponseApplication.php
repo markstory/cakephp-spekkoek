@@ -2,16 +2,17 @@
 namespace Spekkoek\Test\TestApp;
 
 use Spekkoek\BaseApplication;
-use Spekkoek\MiddlewareStack;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class BadResponseApplication extends BaseApplication
 {
 
     /**
-     * @param MiddlewareStack $middleware The middleware stack to set in your App Class
-     * @return MiddlewareStack
+     * @param \Spekkoek\MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @return \Spekkoek\MiddlewareStack
      */
-    public function middleware(MiddlewareStack $middleware)
+    public function middleware($middleware)
     {
         $middleware->push(function ($req, $res, $next) {
             return 'Not a response';
@@ -19,7 +20,7 @@ class BadResponseApplication extends BaseApplication
         return $middleware;
     }
 
-    public function __invoke($req, $res, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         return $res;
     }

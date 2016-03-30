@@ -18,10 +18,10 @@ abstract class BaseApplication
     }
 
     /**
-     * @param MiddlewareStack $middleware The middleware stack to set in your App Class
-     * @return mixed
+     * @param \Spekkoek\MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @return \Spekkoek\MiddlewareStack
      */
-    abstract public function middleware(MiddlewareStack $middleware);
+    abstract public function middleware($middleware);
 
     /**
      * Load all the application configuration and bootstrap logic.
@@ -37,8 +37,8 @@ abstract class BaseApplication
     /**
      *
      * @param ServerRequestInterface $request  A server request object
-     * @param ResponseInterface      $response A response object
-     * @param callable               $next     The next middleware to be executed
+     * @param ResponseInterface $response A response object
+     * @param callable $next The next middleware to be executed
      * @return mixed
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
