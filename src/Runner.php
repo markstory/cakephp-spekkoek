@@ -10,10 +10,16 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Runner
 {
-
+    /**
+     * The current index in the middleware stack.
+     *
+     * @var int
+     */
     protected $index;
 
     /**
+     * The middleware stack being run.
+     *
      * @var MiddlewareStack
      */
     protected $middleware;
